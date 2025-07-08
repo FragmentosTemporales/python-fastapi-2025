@@ -1,6 +1,6 @@
-# FASTELCO
+# FASTESTING
 
-## BASE FASTAPI PARA TELCOMANAGER
+## BASE FASTAPI PARA TESTEO
 
 ## TUTORIAL 
 ```
@@ -41,3 +41,16 @@ $ pip install -r requirements.txt
 $ uvicorn main:app --host=0.0.0.0 --port=5151 --reload
 ```
 
+### VISUALIZACION
+
+1.- Para visualizar la API podemos acceder al siguiente enlace:
+
+```
+http://localhost:5151/
+```
+
+2.- Si tu objetivo es revisar la documentación y testear los endpoints puedes visitar el siguiente enlace:
+
+```
+http://localhost:5151/docs
+```

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Body, HTTPException, Path, Query
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse, FileResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
@@ -88,41 +89,70 @@ class UsuarioPrivate(BaseModel):
 
 usuarios : List[Usuario] = []
 
-@app.get('/', tags=["main"])
+@app.get(
+        '/',
+        tags=["main"],
+        status_code=200,
+        response_description="Respuesta de bienvenida.")
 def main_():
-    return {"message": "Hello, World!"}
+    return PlainTextResponse("Bienvenido a la API de TestingAPI. Puedes acceder a los endpoints de usuario.", status_code=200)
 
 
-@app.get('/usuarios', tags=["usuario"])
+@app.get(
+        '/usuarios',
+        tags=["usuario"],
+        status_code=200,
+        response_description="Lista de usuarios.")
 def get_usuarios() -> List[Usuario]:
-    return [usuario.model_dump() for usuario in usuarios]
+    data = [usuario.model_dump() for usuario in usuarios]
+    return JSONResponse(content=data, status_code=200)
 
 
-@app.get('/usuario/{id}', tags=["usuario"])
+@app.get(
+        '/usuario/{id}',
+        tags=["usuario"],
+        status_code=200,
+        response_description="Usuario por ID.")
 def usuario_(id: int = Path(gt=0)) -> UsuarioPrivate | dict:
     for usuario in usuarios:
         if usuario.id == id:
-            return usuario.model_dump()
+            data = usuario.model_dump()
+            return JSONResponse(content=data, status_code=200)
     raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
 
-@app.get('/usuario/', tags=["usuario"])
-def usuarios_(nombre: str = None) -> Usuario:
+@app.get(
+        '/usuario/',
+        tags=["usuario"],
+        status_code=200,
+        response_description="Usuario por nombre.")
+def usuarios_(nombre: str = Query(min_length=5, max_length=20)) -> Usuario | dict:
     if nombre is not None:
         for usuario in usuarios:
             if usuario.name.lower() == nombre.lower():
-                return usuario.model_dump()
+                data = usuario.model_dump()
+                return JSONResponse(content=data, status_code=200)
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     raise HTTPException(status_code=400, detail="Debe proporcionar un nombre o un ID")
 
 
-@app.post('/usuario/', tags=["usuario"])
+@app.post(
+        '/usuario/',
+        tags=["usuario"],
+        status_code=303,
+        response_description="Crear un nuevo usuario.")
 def crear_usuario(usuario: UsuarioCreate) -> List[Usuario]:
     usuarios.append(usuario)
-    return [usuario.model_dump() for usuario in usuarios]
+    data = [usuario.model_dump() for usuario in usuarios]
+    #return JSONResponse(content=data)
+    return RedirectResponse(url="/usuarios", status_code=303)
 
 
-@app.put('/usuario-update/', tags=["usuario"])
+@app.put(
+        '/usuario-update/',
+        tags=["usuario"],
+        status_code=201,
+        response_description="Actualizar un usuario existente.")
 def atualizar_usuario(usuarioUpdate: UsuarioUpdate, id: int = Body()) -> Usuario:
     for usuario in usuarios:
         if usuario.id == id:
@@ -137,16 +167,32 @@ def atualizar_usuario(usuarioUpdate: UsuarioUpdate, id: int = Body()) -> Usuario
             if usuarioUpdate.age is not None:
                 usuario.age = usuarioUpdate.age
 
-            return usuario.model_dump()
+            data = usuario.model_dump()
+            return JSONResponse(content=data, status_code=201)
 
     raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
 
-@app.delete('/usuario-delete/{id}', tags=["usuario"])
+@app.delete(
+        '/usuario-delete/{id}',
+        tags=["usuario"],
+        status_code=200,
+        response_description="Eliminar un usuario por ID.")
 def eliminar_usuario(id: int) -> List[Usuario]:
     for usuario in usuarios:
         if usuario.id == id:
             usuarios.remove(usuario)
-            return [usuario.model_dump() for usuario in usuarios]
-    
+            data = [usuario.model_dump() for usuario in usuarios]
+            return JSONResponse(content=data, status_code=200)
+
     raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+
+@app.get(
+        '/get_file',
+        tags=["file"],
+        status_code=200,
+        response_description="Obtener archivo README.md.")
+def get_file():
+    file_path = "README.md"
+    return FileResponse(file_path, filename='README.md', media_type='text/markdown')
