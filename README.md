@@ -33,12 +33,20 @@ $ source venv/scripts/activate
 $ pip install -r requirements.txt
 ```
 
+### ANTES DE EJECUTAR
+
+1.- Es necesario crear un archivo .env en la ruta raiz, en este archivo debemos tener las siguientes variables:
+
+```
+SECRET_KEY=
+```
+
 ### EJECUCION
 
 1.- Para ejecutar la aplicacion debes utilizar :
 
 ```
-$ uvicorn src.main:app --host=0.0.0.0 --port=5151 --reload
+$ uvicorn manage:app --host=0.0.0.0 --port=5151 --reload
 ```
 
 ### VISUALIZACION

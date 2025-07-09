@@ -66,7 +66,7 @@ class Usuario(BaseUsuario):
                 "name": "Cristian Rivera",
                 "email": "cristian.rivera@gmail.com",
                 "phone": "+56963410066",
-                "password": "secretpass",
+                "password": "secretpass123",
                 "age": 30
             }
         }
@@ -91,7 +91,7 @@ class UsuarioUpdate(BaseUsuario):
                 "name": "Cristian Rivera",
                 "email": "cristian.rivera@gmail.com",
                 "phone": "+56963410066",
-                "password": "secretpass",
+                "password": "secretpass123",
                 "age": 30
             }
         }
